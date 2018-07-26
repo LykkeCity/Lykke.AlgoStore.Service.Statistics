@@ -12,7 +12,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\Lykke.AlgoStore.Service.Statistics.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -22,6 +22,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.AlgoStore.Security.InstanceAuth" Version="1.0.3" />
     <PackageReference Include="Lykke.Sdk" Version="4.1.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />

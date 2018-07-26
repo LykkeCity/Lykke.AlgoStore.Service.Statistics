@@ -1,6 +1,6 @@
 ﻿using Lykke.SettingsReader.Attributes;
 
-namespace Lykke.Service.Statistics.Settings
+namespace Lykke.AlgoStore.Service.Statistics.Settings
 {
     public class DbSettings
     {

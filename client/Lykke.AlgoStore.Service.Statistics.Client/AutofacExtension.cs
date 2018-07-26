@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using Lykke.HttpClientGenerator;
 using Lykke.HttpClientGenerator.Infrastructure;
 
-namespace Lykke.Service.Statistics.Client
+namespace Lykke.AlgoStore.Service.Statistics.Client
 {
     [PublicAPI]
     public static class AutofacExtension

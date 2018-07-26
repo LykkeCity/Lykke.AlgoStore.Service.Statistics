@@ -1,6 +1,6 @@
 ﻿using Lykke.HttpClientGenerator;
 
-namespace Lykke.Service.Statistics.Client
+namespace Lykke.AlgoStore.Service.Statistics.Client
 {
     public class StatisticsClient : IStatisticsClient
     {
