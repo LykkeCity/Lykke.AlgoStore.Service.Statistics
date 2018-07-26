@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lykke.AlgoStore.Service.Statistics.Client</name>
+    </assembly>
+    <members>
+        <member name="M:Lykke.Service.Statistics.Client.AutofacExtension.RegisterStatisticsClient(Autofac.ContainerBuilder,Lykke.Service.Statistics.Client.StatisticsServiceClientSettings,System.Func{Lykke.HttpClientGenerator.HttpClientGeneratorBuilder,Lykke.HttpClientGenerator.HttpClientGeneratorBuilder})">
+            <summary>
+            Registers <see cref="T:Lykke.Service.Statistics.Client.IStatisticsClient"/> in Autofac container using <see cref="T:Lykke.Service.Statistics.Client.StatisticsServiceClientSettings"/>.
+            </summary>
+            <param name="builder">Autofac container builder.</param>
+            <param name="settings">Statistics client settings.</param>
+            <param name="builderConfigure">Optional <see cref="T:Lykke.HttpClientGenerator.HttpClientGeneratorBuilder"/> configure handler.</param>
+        </member>
+        <member name="T:Lykke.Service.Statistics.Client.IStatisticsClient">
+            <summary>
+            Statistics client interface.
+            </summary>
+        </member>
+        <member name="T:Lykke.Service.Statistics.Client.StatisticsServiceClientSettings">
+            <summary>
+            Statistics client settings.
+            </summary>
+        </member>
+        <member name="P:Lykke.Service.Statistics.Client.StatisticsServiceClientSettings.ServiceUrl">
+            <summary>Service url.</summary>
+        </member>
+    </members>
+</doc>
