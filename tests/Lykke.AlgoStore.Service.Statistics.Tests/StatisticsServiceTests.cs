@@ -38,13 +38,13 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             });
 
             Mapper.AssertConfigurationIsValid();
-
-            _service = MockService();
         }
 
         [Test]
         public void UpdateSummaryAsync_WithNullAsClientId_WillThrowException_Test()
         {
+            _service = MockValidService();
+
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync(null, "TEST"));
 
             Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdCannotBeEmpty));
@@ -53,6 +53,8 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
         [Test]
         public void UpdateSummaryAsync_WithNullAsInstanceId_WillThrowException_Test()
         {
+            _service = MockValidService();
+
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync("TEST", null));
 
             Assert.That(ex.Message, Is.EqualTo(Phrases.InstanceIdCannotBeEmpty));
@@ -61,12 +63,63 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
         [Test]
         public void UpdateSummaryAsync_WithValidClientIdAndInstanceId_WillThrowException_Test()
         {
+            _service = MockValidService();
+
             var result = _service.UpdateSummaryAsync("TEST", "TEST").Result;
 
             Assert.IsNotNull(result);
         }
 
-        private IStatisticsService MockService()
+        private IStatisticsService MockValidService()
+        {
+            var statisticsRepositoryMock = MockValidStatisticsRepository();
+            var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
+            var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
+            var walletBalanceServiceMock = MockValidWalletBalanceService();
+
+            return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+        }
+
+        private Mock<IWalletBalanceService> MockValidWalletBalanceService()
+        {
+            var walletBalanceServiceMock = new Mock<IWalletBalanceService>();
+
+            walletBalanceServiceMock.Setup(x => x.GetWalletBalancesAsync(It.IsAny<string>(), It.IsAny<AssetPair>()))
+                .Returns(() => Task.FromResult(_fixture.Build<ClientBalanceResponseModel>().CreateMany()));
+
+            walletBalanceServiceMock.Setup(x =>
+                    x.GetTotalWalletBalanceInBaseAssetAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<AssetPair>()))
+                .Returns(() => Task.FromResult(_fixture.Build<double>().Create()));
+
+            return walletBalanceServiceMock;
+        }
+
+        private Mock<IAssetsServiceWithCache> MockValidAssetsServiceWithCache()
+        {
+            var assetsServiceWithCacheMock = new Mock<IAssetsServiceWithCache>();
+
+            assetsServiceWithCacheMock.Setup(x => x.TryGetAssetPairAsync(It.IsAny<string>(), CancellationToken.None))
+                .Returns(() => Task.FromResult(_fixture.Build<AssetPair>().Create()));
+
+            assetsServiceWithCacheMock.Setup(x => x.TryGetAssetAsync(It.IsAny<string>(), CancellationToken.None))
+                .Returns(() => Task.FromResult(_fixture.Build<Asset>().Create()));
+
+            return assetsServiceWithCacheMock;
+        }
+
+        private Mock<IAlgoClientInstanceRepository> MockValidAlgoClientInstanceRepository()
+        {
+            var algoClientInstanceRepositoryMock = new Mock<IAlgoClientInstanceRepository>();
+
+            algoClientInstanceRepositoryMock.Setup(x =>
+                    x.GetAlgoInstanceDataByClientIdAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(() => Task.FromResult(_fixture.Build<AlgoClientInstanceData>().Create()));
+
+            return algoClientInstanceRepositoryMock;
+        }
+
+        private Mock<IStatisticsRepository> MockValidStatisticsRepository()
         {
             var statisticsRepositoryMock = new Mock<IStatisticsRepository>();
 
@@ -77,30 +130,7 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
                 .Setup(x => x.CreateOrUpdateSummaryAsync(_fixture.Build<StatisticsSummary>().Create()))
                 .Returns(Task.CompletedTask);
 
-            var algoClientInstanceRepositoryMock = new Mock<IAlgoClientInstanceRepository>();
-
-            algoClientInstanceRepositoryMock.Setup(x =>
-                    x.GetAlgoInstanceDataByClientIdAsync(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(() => Task.FromResult(_fixture.Build<AlgoClientInstanceData>().Create()));
-
-            var assetsServiceWithCacheMock = new Mock<IAssetsServiceWithCache>();
-
-            assetsServiceWithCacheMock.Setup(x => x.TryGetAssetPairAsync(It.IsAny<string>(), CancellationToken.None))
-                .Returns(() => Task.FromResult(_fixture.Build<AssetPair>().Create()));
-
-            assetsServiceWithCacheMock.Setup(x => x.TryGetAssetAsync(It.IsAny<string>(), CancellationToken.None))
-                .Returns(() => Task.FromResult(_fixture.Build<Asset>().Create()));
-
-            var walletBalanceServiceMock = new Mock<IWalletBalanceService>();
-
-            walletBalanceServiceMock.Setup(x => x.GetWalletBalancesAsync(It.IsAny<string>(), It.IsAny<AssetPair>()))
-                .Returns(() => Task.FromResult(_fixture.Build<ClientBalanceResponseModel>().CreateMany()));
-
-            walletBalanceServiceMock.Setup(x => x.GetTotalWalletBalanceInBaseAssetAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<AssetPair>()))
-                .Returns(() => Task.FromResult(_fixture.Build<double>().Create()));
-
-            return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
-                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+            return statisticsRepositoryMock;
         }
     }
 }
