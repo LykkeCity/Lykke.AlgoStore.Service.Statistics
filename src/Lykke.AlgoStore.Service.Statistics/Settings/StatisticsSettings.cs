@@ -1,11 +1,12 @@
 ﻿using JetBrains.Annotations;
-using Lykke.SettingsReader.Attributes;
+using Lykke.AlgoStore.Security.InstanceAuth;
 
-namespace Lykke.Service.Statistics.Settings
+namespace Lykke.AlgoStore.Service.Statistics.Settings
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class StatisticsSettings
     {
         public DbSettings Db { get; set; }
+        public InstanceAuthSettings StatisticsServiceAuth { get; set; }
     }
 }

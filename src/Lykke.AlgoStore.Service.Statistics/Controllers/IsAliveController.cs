@@ -1,9 +1,9 @@
 ﻿using System.Net;
+using Lykke.Common.Api.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Lykke.Common.Api.Contract.Responses;
 
-namespace Lykke.Service.Statistics.Controllers
+namespace Lykke.AlgoStore.Service.Statistics.Controllers
 {
     // NOTE: See https://lykkex.atlassian.net/wiki/spaces/LKEWALLET/pages/35755585/Add+your+app+to+Monitoring
     [Route("api/[controller]")]

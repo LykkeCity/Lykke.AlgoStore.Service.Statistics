@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Lykke.Service.Statistics.Client
+namespace Lykke.AlgoStore.Service.Statistics.Client
 {
     /// <summary>
     /// Statistics client interface.
