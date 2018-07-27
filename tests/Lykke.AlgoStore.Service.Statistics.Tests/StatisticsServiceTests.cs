@@ -51,11 +51,19 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
         }
 
         [Test]
-        public void UpdateSummaryAsync_WithNullAsinstanceId_WillThrowException_Test()
+        public void UpdateSummaryAsync_WithNullAsInstanceId_WillThrowException_Test()
         {
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync("TEST", null));
 
             Assert.That(ex.Message, Is.EqualTo(Phrases.InstanceIdCannotBeEmpty));
+        }
+
+        [Test]
+        public void UpdateSummaryAsync_WithValidClientIdAndInstanceId_WillThrowException_Test()
+        {
+            var result = _service.UpdateSummaryAsync("TEST", "TEST").Result;
+
+            Assert.IsNotNull(result);
         }
 
         private IStatisticsService MockService()
@@ -79,6 +87,9 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
 
             assetsServiceWithCacheMock.Setup(x => x.TryGetAssetPairAsync(It.IsAny<string>(), CancellationToken.None))
                 .Returns(() => Task.FromResult(_fixture.Build<AssetPair>().Create()));
+
+            assetsServiceWithCacheMock.Setup(x => x.TryGetAssetAsync(It.IsAny<string>(), CancellationToken.None))
+                .Returns(() => Task.FromResult(_fixture.Build<Asset>().Create()));
 
             var walletBalanceServiceMock = new Mock<IWalletBalanceService>();
 
