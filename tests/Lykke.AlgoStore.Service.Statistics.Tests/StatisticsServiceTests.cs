@@ -70,10 +70,52 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             Assert.IsNotNull(result);
         }
 
+        [Test]
+        public void UpdateSummaryAsync_ForNonExistingSummary_WillThrowException_Test()
+        {
+            _service = MockServiceWithInvalidStatisticsRepository();
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync("TEST", "TEST"));
+
+            Assert.That(ex.Message, Is.EqualTo("Could not find statistic summary row for AlgoInstance: TEST"));
+        }
+
+        [Test]
+        public void UpdateSummaryAsync_ForNonExistingInstanceId_WillThrowException_Test()
+        {
+            _service = MockServiceWithInvalidAlgoInstanceRepository();
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync("TEST", "TEST"));
+
+            Assert.That(ex.Message, Is.EqualTo("Could not find AlgoInstance with InstanceId TEST and ClientId TEST"));
+        }
+
         private IStatisticsService MockValidService()
         {
             var statisticsRepositoryMock = MockValidStatisticsRepository();
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
+            var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
+            var walletBalanceServiceMock = MockValidWalletBalanceService();
+
+            return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+        }
+
+        private IStatisticsService MockServiceWithInvalidStatisticsRepository()
+        {
+            var statisticsRepositoryMock = MockInvalidStatisticsRepository();
+            var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
+            var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
+            var walletBalanceServiceMock = MockValidWalletBalanceService();
+
+            return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+        }
+
+        private IStatisticsService MockServiceWithInvalidAlgoInstanceRepository()
+        {
+            var statisticsRepositoryMock = MockValidStatisticsRepository();
+            var algoClientInstanceRepositoryMock = MockInvalidAlgoClientInstanceRepository();
             var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
             var walletBalanceServiceMock = MockValidWalletBalanceService();
 
@@ -119,12 +161,37 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             return algoClientInstanceRepositoryMock;
         }
 
+        private Mock<IAlgoClientInstanceRepository> MockInvalidAlgoClientInstanceRepository()
+        {
+            var algoClientInstanceRepositoryMock = new Mock<IAlgoClientInstanceRepository>();
+
+            algoClientInstanceRepositoryMock.Setup(x =>
+                    x.GetAlgoInstanceDataByClientIdAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(() => Task.FromResult<AlgoClientInstanceData>(null));
+
+            return algoClientInstanceRepositoryMock;
+        }
+
         private Mock<IStatisticsRepository> MockValidStatisticsRepository()
         {
             var statisticsRepositoryMock = new Mock<IStatisticsRepository>();
 
             statisticsRepositoryMock.Setup(x => x.GetSummaryAsync(It.IsAny<string>()))
                 .Returns(() => Task.FromResult(_fixture.Build<StatisticsSummary>().Create()));
+
+            statisticsRepositoryMock
+                .Setup(x => x.CreateOrUpdateSummaryAsync(_fixture.Build<StatisticsSummary>().Create()))
+                .Returns(Task.CompletedTask);
+
+            return statisticsRepositoryMock;
+        }
+
+        private Mock<IStatisticsRepository> MockInvalidStatisticsRepository()
+        {
+            var statisticsRepositoryMock = new Mock<IStatisticsRepository>();
+
+            statisticsRepositoryMock.Setup(x => x.GetSummaryAsync(It.IsAny<string>()))
+                .Returns(() => Task.FromResult<StatisticsSummary>(null));
 
             statisticsRepositoryMock
                 .Setup(x => x.CreateOrUpdateSummaryAsync(_fixture.Build<StatisticsSummary>().Create()))
