@@ -93,7 +93,7 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
         [Test]
         public void UpdateSummaryAsync_ForNonExistingAssetPair_WillThrowException_Test()
         {
-            _service = MockServiceWithInvalidAssetsService();
+            _service = MockServiceWithInvalidAssetsServiceForAssetsAndAssetPairs();
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync("TEST", "TEST"));
 
@@ -103,7 +103,7 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
         [Test]
         public void UpdateSummaryAsync_ForNonExistingAsset_WillThrowException_Test()
         {
-            _service = MockServiceWithInvalidAssetsService2();
+            _service = MockServiceWithInvalidAssetsServiceForAssetPairs();
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.UpdateSummaryAsync("TEST", "TEST"));
 
@@ -121,7 +121,7 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
                 assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
         }
 
-        private IStatisticsService MockServiceWithInvalidAssetsService()
+        private IStatisticsService MockServiceWithInvalidAssetsServiceForAssetsAndAssetPairs()
         {
             var statisticsRepositoryMock = MockValidStatisticsRepository();
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
@@ -132,7 +132,7 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
                 assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
         }
 
-        private IStatisticsService MockServiceWithInvalidAssetsService2()
+        private IStatisticsService MockServiceWithInvalidAssetsServiceForAssetPairs()
         {
             var statisticsRepositoryMock = MockValidStatisticsRepository();
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
