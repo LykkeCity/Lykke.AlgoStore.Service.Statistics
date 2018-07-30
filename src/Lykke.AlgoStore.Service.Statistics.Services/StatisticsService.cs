@@ -97,9 +97,9 @@ namespace Lykke.AlgoStore.Service.Statistics.Services
                 throw new ValidationException(Phrases.InstanceIdCannotBeEmpty);
         }
 
-        private static void ValidateClientId(string instanceId)
+        private static void ValidateClientId(string clientId)
         {
-            if (string.IsNullOrEmpty(instanceId))
+            if (string.IsNullOrEmpty(clientId))
                 throw new ValidationException(Phrases.ClientIdCannotBeEmpty);
         }
     }
