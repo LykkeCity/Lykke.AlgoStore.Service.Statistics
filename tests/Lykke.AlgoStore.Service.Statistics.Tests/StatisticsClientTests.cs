@@ -8,6 +8,7 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
 {
     public class StatisticsClientTests
     {
+        private readonly string _authToken = "0e72f8d0-ed37-4e59-87e8-977e56e88f02";
         private readonly Fixture _fixture = new Fixture();
         private IStatisticsClient _client;
 
@@ -25,12 +26,8 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
 
             Mapper.AssertConfigurationIsValid();
 
-            //REMARK: Must use auth token for existing algo instance
-            var authHandler = new AlgoAuthorizationHeaderHttpClientHandler("fc362170-e7ab-46d0-8913-143b946a04a7");
-
             _client = HttpClientGenerator.HttpClientGenerator
                 .BuildForUrl("http://localhost:5000")
-                .WithAdditionalDelegatingHandler(authHandler)
                 .Create()
                 .Generate<IStatisticsClient>();
         }
@@ -40,10 +37,10 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
         public void UpdateSummaryAsync_Test()
         {
             //REMARK: Must use existing client and instance ids
-            var clientId = "637ed5dd-54e2-42fa-bcfd-0454fb54f761";
-            var instanceId = "b1acb6b4-55fc-4f83-8804-281a0b1e95a3";
+            var clientId = "71a4471d-7b4f-4264-93c6-235fd1eda4ad";
+            var instanceId = "0d09e70c-0bbc-461d-bee5-adca9b4ecc69";
 
-            _client.UpdateSummaryAsync(clientId, instanceId).Wait();
+            _client.UpdateSummaryAsync(clientId, instanceId, _authToken.ToBearerToken()).Wait();
         }
     }
 }
