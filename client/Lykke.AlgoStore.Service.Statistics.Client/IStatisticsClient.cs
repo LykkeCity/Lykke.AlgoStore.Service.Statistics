@@ -12,5 +12,8 @@ namespace Lykke.AlgoStore.Service.Statistics.Client
     {
         [Post("/api/v1/statistics/updateSummary")]
         Task UpdateSummaryAsync(string clientId, string instanceId, [Header("Authorization")] string instanceAuthToken);
+
+        [Post("/api/v1/statistics/increaseTotalTrades")]
+        Task IncreaseTotalTradesAsync([Header("Authorization")] string instanceAuthToken);
     }
 }

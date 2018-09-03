@@ -110,6 +110,34 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             Assert.That(ex.Message, Is.EqualTo("Asset was not found"));
         }
 
+        [Test]
+        public void IncreaseTotalTradesAsync_WithNullAsInstanceId_WillThrowException_Test()
+        {
+            _service = MockValidService();
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.IncreaseTotalTradesAsync(null));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.InstanceIdCannotBeEmpty));
+        }
+
+        [Test]
+        public void IncreaseTotalTradesAsync_WithValidInstanceId_Test()
+        {
+            _service = MockValidService();
+
+            Assert.DoesNotThrowAsync(() => _service.IncreaseTotalTradesAsync("TEST"));
+        }
+
+        [Test]
+        public void IncreaseTotalTradesAsync_ForNonExistingSummary_WillThrowException_Test()
+        {
+            _service = MockServiceWithInvalidStatisticsRepository();
+
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.IncreaseTotalTradesAsync("TEST"));
+
+            Assert.That(ex.Message, Is.EqualTo("Could not find statistic summary row for AlgoInstance: TEST"));
+        }
+
         private IStatisticsService MockValidService()
         {
             var statisticsRepositoryMock = MockValidStatisticsRepository();
