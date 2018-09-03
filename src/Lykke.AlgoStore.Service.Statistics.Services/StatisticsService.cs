@@ -76,6 +76,18 @@ namespace Lykke.AlgoStore.Service.Statistics.Services
             return statisticsSummary;
         }
 
+        public async Task IncreaseTotalTradesAsync(string instanceId)
+        {
+            ValidateInstanceId(instanceId);
+
+            var statisticsSummary = (await _statisticsRepository.GetSummaryAsync(instanceId))
+                ?? throw new ValidationException($"Could not find statistic summary row for AlgoInstance: {instanceId}");
+
+            statisticsSummary.TotalNumberOfTrades += 1;
+
+            await _statisticsRepository.CreateOrUpdateSummaryAsync(statisticsSummary);
+        }
+
         private static void ValidateAssetResponse(Asset assetResponse)
         {
             if (assetResponse == null)

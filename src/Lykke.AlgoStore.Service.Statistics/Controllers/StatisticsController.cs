@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using Lykke.AlgoStore.Security.InstanceAuth;
 using Lykke.AlgoStore.Service.Statistics.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,16 @@ namespace Lykke.AlgoStore.Service.Statistics.Controllers
         public async Task<IActionResult> UpdateSummary(string clientId, string instanceId)
         {
             await _service.UpdateSummaryAsync(clientId, instanceId);
+
+            return NoContent();
+        }
+
+        [HttpPost("increaseTotalTrades")]
+        [SwaggerOperation("IncreaseTotalTrades")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        public async Task<IActionResult> IncreaseTotalTrades()
+        {
+            await _service.IncreaseTotalTradesAsync(User.GetInstanceData().InstanceId);
 
             return NoContent();
         }
