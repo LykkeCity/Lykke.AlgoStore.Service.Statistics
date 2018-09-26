@@ -3,12 +3,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoMapper;
+using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Models;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
 using Lykke.AlgoStore.Service.Statistics.Core.Services;
 using Lykke.AlgoStore.Service.Statistics.Services;
 using Lykke.AlgoStore.Service.Statistics.Services.Strings;
+using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 using Lykke.Service.Balances.AutorestClient.Models;
@@ -144,9 +146,10 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
             var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
             var walletBalanceServiceMock = MockValidWalletBalanceService();
+            var logFactoryMock = MockValidLogFactory();
 
             return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
-                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object, logFactoryMock.Object);
         }
 
         private IStatisticsService MockServiceWithInvalidAssetsServiceForAssetsAndAssetPairs()
@@ -155,9 +158,10 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
             var assetsServiceWithCacheMock = MockInvalidAssetsServiceWithCache();
             var walletBalanceServiceMock = MockValidWalletBalanceService();
+            var logFactoryMock = MockValidLogFactory();
 
             return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
-                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object, logFactoryMock.Object);
         }
 
         private IStatisticsService MockServiceWithInvalidAssetsServiceForAssetPairs()
@@ -166,9 +170,10 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
             var assetsServiceWithCacheMock = MockInvalidAssetsServiceWithCache(false);
             var walletBalanceServiceMock = MockValidWalletBalanceService();
+            var logFactoryMock = MockValidLogFactory();
 
             return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
-                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object, logFactoryMock.Object);
         }
 
         private IStatisticsService MockServiceWithInvalidStatisticsRepository()
@@ -177,9 +182,10 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             var algoClientInstanceRepositoryMock = MockValidAlgoClientInstanceRepository();
             var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
             var walletBalanceServiceMock = MockValidWalletBalanceService();
+            var logFactoryMock = MockValidLogFactory();
 
             return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
-                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object, logFactoryMock.Object);
         }
 
         private IStatisticsService MockServiceWithInvalidAlgoInstanceRepository()
@@ -188,9 +194,20 @@ namespace Lykke.AlgoStore.Service.Statistics.Tests
             var algoClientInstanceRepositoryMock = MockInvalidAlgoClientInstanceRepository();
             var assetsServiceWithCacheMock = MockValidAssetsServiceWithCache();
             var walletBalanceServiceMock = MockValidWalletBalanceService();
+            var logFactoryMock = MockValidLogFactory();
 
             return new StatisticsService(statisticsRepositoryMock.Object, algoClientInstanceRepositoryMock.Object,
-                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object);
+                assetsServiceWithCacheMock.Object, walletBalanceServiceMock.Object, logFactoryMock.Object);
+        }
+
+        private static Mock<ILogFactory> MockValidLogFactory()
+        {
+            var logFactoryMock = new Mock<ILogFactory>();
+            var logMock = new Mock<ILog>();
+
+            logFactoryMock.Setup(x => x.CreateLog(It.IsAny<object>())).Returns(logMock.Object);
+
+            return logFactoryMock;
         }
 
         private Mock<IWalletBalanceService> MockValidWalletBalanceService()
