@@ -2,10 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Models;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
 using Lykke.AlgoStore.Service.Statistics.Core.Services;
 using Lykke.AlgoStore.Service.Statistics.Services.Strings;
+using Lykke.Common.Log;
 using Lykke.Service.Assets.Client;
 using Lykke.Service.Assets.Client.Models;
 
@@ -17,16 +19,19 @@ namespace Lykke.AlgoStore.Service.Statistics.Services
         private readonly IAlgoClientInstanceRepository _algoInstanceRepository;
         private readonly IAssetsServiceWithCache _assetsService;
         private readonly IWalletBalanceService _walletBalanceService;
+        private readonly ILog _log;
 
         public StatisticsService(IStatisticsRepository statisticsRepository,
             IAlgoClientInstanceRepository algoClientInstanceRepository,
             IAssetsServiceWithCache assetsService,
-            IWalletBalanceService walletBalanceService)
+            IWalletBalanceService walletBalanceService,
+            ILogFactory logFactory)
         {
             _statisticsRepository = statisticsRepository;
             _algoInstanceRepository = algoClientInstanceRepository;
             _assetsService = assetsService;
             _walletBalanceService = walletBalanceService;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<StatisticsSummary> UpdateSummaryAsync(string clientId, string instanceId)
@@ -74,6 +79,22 @@ namespace Lykke.AlgoStore.Service.Statistics.Services
             await _statisticsRepository.CreateOrUpdateSummaryAsync(statisticsSummary);
 
             return statisticsSummary;
+        }
+
+        public async Task IncreaseTotalTradesAsync(string instanceId)
+        {
+            _log.Info("IncreaseTotalTradesAsync started");
+
+            ValidateInstanceId(instanceId);
+
+            var statisticsSummary = (await _statisticsRepository.GetSummaryAsync(instanceId))
+                ?? throw new ValidationException($"Could not find statistic summary row for AlgoInstance: {instanceId}");
+
+            statisticsSummary.TotalNumberOfTrades += 1;
+
+            await _statisticsRepository.CreateOrUpdateSummaryAsync(statisticsSummary);
+
+            _log.Info("IncreaseTotalTradesAsync finished");
         }
 
         private static void ValidateAssetResponse(Asset assetResponse)
