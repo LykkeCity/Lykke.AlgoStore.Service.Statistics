@@ -22,7 +22,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.AlgoStore.Security.InstanceAuth" Version="1.0.5" />
+    <PackageReference Include="Lykke.AlgoStore.Security.InstanceAuth" Version="1.0.6" />
     <PackageReference Include="Lykke.Sdk" Version="4.1.1" />
     <PackageReference Include="Lykke.Service.Assets.Client" Version="4.4.0" />
     <PackageReference Include="Lykke.Service.Balances.Client" Version="2.0.0" />
